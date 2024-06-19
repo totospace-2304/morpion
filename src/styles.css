@@ -1,16 +1,8 @@
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: sans-serif;
-  margin: 20px;
-  padding: 0;
-}
-
 h1 {
   margin-top: 0;
-  font-size: 22px;
+  font-size: 80px;
+  display: flex;
+  justify-content: center;
 }
 
 h2 {
@@ -46,10 +38,6 @@ ul {
   padding-inline-start: 20px;
 }
 
-* {
-  box-sizing: border-box;
-}
-
 body {
   font-family: sans-serif;
   margin: 20px;
@@ -57,28 +45,43 @@ body {
 }
 
 .square {
-  background: #fff;
-  border: 1px solid #999;
+  background: #ffffff;
+  border: 10px solid #6c81dd;
   float: left;
-  font-size: 24px;
+  font-size: 50px;
   font-weight: bold;
-  line-height: 34px;
-  height: 34px;
+  line-height: 150px;
+  height: 150px;
   margin-right: -1px;
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  width: 34px;
+  width: 150px;
+}
+
+.square span {
+  color: #6c81dd;
+
+  font-size: 125px;
+  font-weight: bold;
+  line-height: 150px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
 }
 
 .board-row:after {
   clear: both;
-  content: '';
+  content: "";
   display: table;
 }
 
 .status {
-  margin-bottom: 10px;
+  margin-bottom: 50px;
+  padding-left: 10%;
+  color: #ffffff;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 .game {
   display: flex;
@@ -87,4 +90,54 @@ body {
 
 .game-info {
   margin-left: 20px;
+}
+body,
+html {
+  background-color: #8cabd2;
+  color: #fff;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+body {
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+.h1 {
+  margin: auto;
+}
+.board-row {
+  display: flex;
+  justify-content: center;
+}
+.game-board {
+  font-size: 65px;
+}
+ol {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+}
+button {
+  padding: 20px;
+  margin: 10px;
+  background-color: #6c81dd;
+  border-radius: 30px;
+  overflow: hidden;
+  border: #6c81dd;
+  color: #ffffff;
+}
+button:hover:not(.game-info) {
+  filter: drop-shadow(0 0 0.75rem rgb(83, 106, 209));
+}
+span:hover {
+  box-shadow: 12px 12px 12px 0, 5;
+  overflow: hidden;
 }
