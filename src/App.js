@@ -58,7 +58,7 @@ export default function Game() {
   const [currentPlayer, setCurrentPlayer] = useState(null);
 
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(
-    "ws://192.168.1.47:9001",
+    "wss://tools.jackdarius.fr/ws/morpion",
     {
       shouldReconnect: () => {
         return didUnmount.current === false;
@@ -75,7 +75,9 @@ export default function Game() {
 
   useEffect(() => {
     async function _fetch() {
-      const response = await fetch("http://localhost:9000/api/game");
+      const response = await fetch(
+        "https://tools.jackdarius.fr/toto/morpion/api/game"
+      );
       const game = await response.json();
       setSquares(game.squares);
       setCurrentMove(game.currentMove);
