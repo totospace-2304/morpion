@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import useWebSocket from "react-use-websocket";
 
 function Square({ value, onSquareClick }) {
   return (
@@ -53,48 +54,106 @@ function Board({ xIsNext, squares, onPlay }) {
 }
 
 export default function Game() {
-  const [history, setHistory] = useState([Array(9).fill(null)]);
-  const [currentMove, setCurrentMove] = useState(0);
-  const xIsNext = currentMove % 2 === 0;
-  const currentSquares = history[currentMove];
+  const [players, setPlayers] = useState(null);
+  const [currentPlayer, setCurrentPlayer] = useState(null);
 
-  function handlePlay(nextSquares) {
-    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
-    setHistory(nextHistory);
-    setCurrentMove(nextHistory.length - 1);
-  }
-
-  function jumpTo(nextMove) {
-    setCurrentMove(nextMove);
-  }
-
-  const moves = history.map((squares, move) => {
-    let description;
-    if (move > 0) {
-      description = "Aller au coup #" + move;
-    } else {
-      description = "Revenir au début";
+  const { sendJsonMessage, lastJsonMessage } = useWebSocket(
+    "ws://192.168.1.47:9001",
+    {
+      shouldReconnect: () => {
+        return didUnmount.current === false;
+      },
+      retryOnError: true,
+      reconnectAttempts: 60,
+      reconnectInterval: 1000,
     }
-    return (
-      <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
-      </li>
-    );
-  });
+  );
+
+  const [squares, setSquares] = useState();
+  const [currentMove, setCurrentMove] = useState();
+  const xIsNext = currentMove % 2 === 0;
+
+  useEffect(() => {
+    async function _fetch() {
+      const response = await fetch("http://localhost:9000/api/game");
+      const game = await response.json();
+      setSquares(game.squares);
+      setCurrentMove(game.currentMove);
+    }
+    _fetch();
+  }, []);
+
+  useEffect(() => {
+    if (lastJsonMessage) {
+      setSquares(lastJsonMessage.squares);
+      setCurrentMove(lastJsonMessage.currentMove);
+    }
+  }, [lastJsonMessage]);
+
+  // const jO = players?.joueurO;
+  // const jX = players?.joueurX;
+
+  // async function inscriptionX() {
+  //   let X = await fetch("http://localhost:9000/inscription");
+  //   let connect = await X.json();
+  //   setPlayers({ ...players, joueurX: connect });
+
+  //   console.log(players);
+  // }
+
+  // async function inscriptionO() {
+  //   let O = await fetch("http://localhost:9000/inscription");
+  //   let connect1 = O.json;
+  //   setPlayers({ ...players, joueurO: connect1 });
+
+  //   console.log(players);
+  // }
+
+  async function handlePlay(nextSquares) {
+    sendJsonMessage({ nextSquares });
+  }
+
+  async function reset() {
+    sendJsonMessage({ action: "reset" });
+  }
+
+  if (squares === undefined || currentMove === undefined) {
+    return "loading";
+  }
 
   return (
     <>
       <div className="h1">
         <h1>MORPION</h1>
       </div>
-      <br />
-      <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
-      </div>
-      <div></div>
-      <div className="game-info">
-        <ol>{moves}</ol>
-      </div>
+
+      {/* {currentPlayer === null ? (
+        <div className="buttons">
+          {players.joueurX === null ? (
+            <button className="X" onClick={inscriptionX}>
+              Je suis X
+            </button>
+          ) : (
+            <div>X Déja connecté</div>
+          )}
+          {players.joueurO === null ? (
+            <button className="O" onClick={inscriptionO}>
+              Je suis O
+            </button>
+          ) : (
+            <div>O Déja connecté</div>
+          )}
+        </div>
+      ) : ( */}
+      <>
+        <div className="game-board">
+          <Board xIsNext={xIsNext} squares={squares} onPlay={handlePlay} />
+        </div>
+        <div>
+          <button onClick={reset}>Recommencer</button>
+        </div>
+      </>
+      {/* )} */}
     </>
   );
 }
